@@ -1,0 +1,71 @@
+// gnu99
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <time.h>
+#include <string.h>
+#include <x86intrin.h>
+#include <math.h>
+
+#ifndef NMAX
+#error NMAX NOT ENTERED
+#endif
+
+#define OK 0
+
+/**
+ * @brief Функция сортирует массив выбором 
+ * @param arr_size Длина массива
+ * @param arr Массив
+*/
+void selection_sort(int *pbeg, int *pend)
+{
+    for (int *first_start = pbeg; first_start < pend; first_start++)
+    {
+        int *min_elem_ptr = first_start;
+        for (int *second_start = first_start + 1; second_start < pend; second_start++)
+        {
+            if (*second_start < *min_elem_ptr)
+                min_elem_ptr = second_start;
+        }
+        if (first_start != min_elem_ptr)
+        {
+            int tmp = *(first_start);
+            *first_start = *min_elem_ptr;
+            *min_elem_ptr = tmp;
+        }
+    }
+}
+/**
+ * @brief Функция заполняет массив случайными числами 
+ * @param size Длина массива
+ * @param arr Массив для заполнения
+*/
+void init(const size_t size, int *arr)
+{
+    for (size_t i = 0; i < size; i++)
+        arr[i] = rand();
+}
+
+int main(void)
+{
+    srand(time(NULL));
+    size_t size = NMAX;
+    int src_arr[size], arr[size];
+
+    init(size, src_arr);
+
+    unsigned long long tick_beg = __rdtsc();
+    selection_sort(arr, arr + size);
+    unsigned long long tick_end = __rdtsc();
+
+    arr[0] = arr[1];
+    arr[1] = 54321;
+
+    unsigned long long time = tick_end - tick_beg;
+
+    printf("%llu\n", time);
+
+    return OK;
+}
+
